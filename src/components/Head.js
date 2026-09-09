@@ -1,6 +1,13 @@
 import React from 'react'
+import { useDispatch } from 'react-redux'
+import { togglemenu } from '../utils/appSlice';
 
 const Head = () => {
+
+  const dispatch = useDispatch();
+  const toggleMenuHandler = () => {
+    dispatch(togglemenu());
+  }  
   return (
     <div>
         <header className="flex items-center justify-between px-5 py-3 border-b border-gray-200">
@@ -10,9 +17,10 @@ const Head = () => {
                 
                 {/* Menu */}
                 <img
+                onClick={() => toggleMenuHandler()}
                 src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/svgs/solid/bars.svg"
                 alt="menu"
-                className="w-6 h-6"
+                className="w-6 h-6 cursor-pointer"
                 />
 
                 {/* YouTube Logo */}
