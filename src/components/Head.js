@@ -5,12 +5,13 @@ import { toggleMenu } from '../utils/appSlice';
 const Head = () => {
 
   const dispatch = useDispatch();
+  
   const toggleMenuHandler = () => {
     dispatch(toggleMenu());
-  }  
+  } 
+
   return (
-    <div>
-        <header className="flex items-center justify-between px-5 py-3 border-b border-gray-200">
+        <header className="sticky top-0 z-50 bg-white shadow-md flex items-center justify-between px-5 py-3 border-b border-gray-200">
       
             {/* Left section */}
             <div className="flex items-center gap-5">
@@ -77,8 +78,7 @@ const Head = () => {
                 />
             </div>
 
-            </header>
-    </div>
+        </header>
   )
 }
 
