@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
 
@@ -15,10 +16,12 @@ const Sidebar = () => {
       <div className="space-y-2">
 
         {/* Home */}
-        <div className="flex items-center gap-5 px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">
-          <span className="text-xl">🏠</span>
-          <span>Home</span>
-        </div>
+        <Link to="/">
+          <div className="flex items-center gap-5 px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">
+            <span className="text-xl">🏠</span>
+            <span>Home</span>
+          </div>
+        </Link>
 
         {/* Shorts */}
         <div className="flex items-center gap-5 px-3 py-2 rounded-lg hover:bg-gray-100 cursor-pointer">
