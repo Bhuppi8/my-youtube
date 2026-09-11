@@ -1,11 +1,46 @@
-import React from 'react'
-import { useDispatch } from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { toggleMenu } from '../utils/appSlice';
+import { YOUTUBE_SEARCH_API } from '../utils/constants';
+import { cacheResults } from '../utils/searchSlice';
 
 const Head = () => {
 
-  const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [suggestion, setSuggestion] = useState([]);
+  const [showsuggestion, setShowSuggestion] = useState(false);
+
+
+  const searchCache = useSelector(store => store.search)
   
+  useEffect(()=> {
+    
+    const timer = setTimeout(() => {
+        if(searchCache[searchQuery]) {
+            setSuggestion(searchCache[searchQuery])
+        } else {
+            console.log("api call is made")
+            getSearchSuggestions()
+        }
+    }, 200);
+
+    return () => {
+        clearTimeout(timer);
+    }
+
+  }, [searchQuery]);
+
+  const getSearchSuggestions = async () => {
+    const data = await fetch(YOUTUBE_SEARCH_API+ searchQuery);
+    const json = await data.json();
+    setSuggestion(json[1]);
+    dispatch(cacheResults({
+        [searchQuery]: json[1],
+    }))
+  }
+
+  const dispatch = useDispatch();
+
   const toggleMenuHandler = () => {
     dispatch(toggleMenu());
   } 
@@ -33,28 +68,35 @@ const Head = () => {
             </div>
 
 
+    
             {/* Search section */}
-            <div className="flex items-center w-1/2">
-                
+            <div className="flex items-center w-1/2 relative">
+
+            {/* Search input + button */}
+            <div className="flex items-center w-full">
                 <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onFocus={() => setShowSuggestion(true)}
+                onBlur={() => setShowSuggestion(false)}
                 type="text"
                 placeholder="Search"
                 className="
-                    w-full
-                    px-4
-                    py-2
+                    flex-1
+                    px-5
+                    py-2.5
                     border
                     border-gray-300
                     rounded-l-full
                     outline-none
-                    focus:border-blue-500
+                    focus:border-gray-500
                 "
                 />
 
                 <button
                 className="
                     px-6
-                    py-2
+                    py-2.5
                     border
                     border-l-0
                     border-gray-300
@@ -65,8 +107,66 @@ const Head = () => {
                 >
                 Search
                 </button>
+            </div>
+
+
+            {/* Search suggestions */}
+            {showsuggestion && suggestion.length > 0 && (
+                <div
+                className="
+                    absolute
+                    top-[46px]
+                    left-0
+                    w-full
+                    bg-white
+                    border
+                    border-gray-200
+                    rounded-xl
+                    shadow-lg
+                    overflow-hidden
+                    z-50
+                "
+                >
+                <ul className="py-2">
+
+                    {suggestion.map((suggest) => (
+                    <li
+                        key={suggest}
+                        className="
+                        flex
+                        items-center
+                        gap-3
+                        px-5
+                        py-2.5
+                        text-sm
+                        text-gray-800
+                        cursor-pointer
+                        hover:bg-gray-100
+                        "
+                        onMouseDown={() => {
+                        setSearchQuery(suggest);
+                        setShowSuggestion(false);
+                        }}
+                    >
+                        {/* Search icon */}
+                        <img
+                        src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/svgs/solid/magnifying-glass.svg"
+                        alt=""
+                        className="w-4 h-4 opacity-60"
+                        />
+
+                        <span className="truncate">
+                        {suggest}
+                        </span>
+                    </li>
+                    ))}
+
+                </ul>
+                </div>
+            )}
 
             </div>
+
 
 
             {/* User */}
